@@ -1,1 +1,172 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Page Template</title>
+        <style type="text/css">
+
+            .text_style1 {
+                /*background-color: black;*/
+                font-size: 18px;
+                /*font-weight: bold;*/
+                /*color: black;*/
+                font-family: Helvetica;
+            }
+
+        </style>
+        <script type="text/javascript" src="d3/d3.v3.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+
+var w = 1200;
+var h = 600;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h);
+
+var colors = [
+  [ 178, 178, 255 ], // 'lpr'
+  [ 153, 204, 153 ], // 'lgr'
+  [ 235, 140, 140 ], // 'lrd'
+  [ 240, 185,  35 ], // 'gld'
+  [ 110, 190, 240 ], // 'cyn'
+  [ 200, 180, 130 ], // 'brn'
+  [ 229, 153, 204 ], // 'pnk'
+  [ 210, 210, 210 ], // 'gra'
+]
+
+var color_fun = function(i) {
+  var RGB = colors[i];
+  return 'rgb('+RGB[0]+','+RGB[1]+','+RGB[2]+')';
+}
+
+var color_fun_dark = function(i) {
+  var RGB0 = colors[i];
+  var RGB = [Math.floor(RGB0[0]*.8),Math.floor(RGB0[1]*.8),Math.floor(RGB0[2]*.8)];
+  return 'rgb('+RGB[0]+','+RGB[1]+','+RGB[2]+')';
+}
+
+dataset1 = [
+  {key:'A',value:{'x':50,'y':100,'c_i':0}},
+  {key:'B',value:{'x':200,'y':150,'c_i':1}},
+ ]
+
+keyf = function(d){return d.key}
+
+//svg.selectAll('rect')
+//  .data(dataset1,keyf)
+//  .enter()
+//  .append('rect')
+//  .attr('x',function(d){return d.value['x']})
+//  .attr('y',function(d){return d.value['y']})
+//  .attr('width',25)
+//  .attr('height',25)
+//  .attr('fill',function(d){return color_fun(d.value['c_i'])});
+//
+//dataset2 = [
+//  {key:'C',value:{'x':25,'y':20,'c_i':2}},
+//  {key:'D',value:{'x':150,'y':110,'c_i':3}},
+// ]
+//dataset1 = dataset2.concat(dataset1)
+//
+//svg.selectAll('rect')
+//  .data(dataset1,keyf)
+//  .enter()
+//  .append('rect')
+//  .attr('x',function(d){return d.value['x']})
+//  .attr('y',function(d){return d.value['y']})
+//  .attr('width',25)
+//  .attr('height',25)
+//  .attr('fill',function(d){return color_fun(d.value['c_i'])})
+//
+
+dataset3 = [
+  {'a':0,'b':36},
+  {'a':1,'b':44},
+  {'a':2,'b':40},
+  {'a':3,'b':34},
+  {'a':4,'b':38},
+  {'a':5,'b':32},
+  {'a':6,'b':46},
+  {'a':-1,'b':30},
+]
+
+key_foo = function(d){return d.a}
+
+b = svg.append('g').attr('class','b')
+//b.append('rect').attr('x',100).attr('y',500).attr('width',100).attr('height',20)
+
+//a = svg.selectAll(rect') // this will fail since there is a rect in the DOM (line above, now commented out). if that line gets moved below, it will work.  as long as it's empty, the selection arg doesn't matter. 
+a = svg.selectAll('blah.bleh.bluh')
+  .data(dataset3, key_foo)
+  .enter()
+  .append('circle')
+  .attr('cx',function(d,i){return i*100+100})
+  .attr('cy',100)
+  .attr('r',function(d){return d.b})
+  .attr('fill',function(d,i){return color_fun(i)})
+  .on('mouseover',function(){
+    console.log(d3.select(this));
+    var y = d3.select(this).attr('cy');
+    d3.select(this)
+      .transition()
+      .delay(100)
+      .duration(1000)
+      .ease('cubic-out-in')
+      .attr('cy',function(d){
+        if (y==100) {return 500}
+          else {return 100}
+      })
+  });
+
+
+//a = svg.selectAll('circle')
+//  .data(d3.range(0,100,1))
+//  .enter()
+//  .append('rect')
+//  .attr('x',function(d,i){return (i%10)*100+10})
+//  .attr('y',function(d,i){return (Math.floor(i/10))*50+10})
+//  .attr('width',90)
+//  .attr('height',45)
+//  .attr('fill',function(d,i){
+//    x = i%10; y = Math.floor(i/10);
+//    RGB = [5+25*x,5+25*y,d3.min([5,(d3.max([250,540-25*(x+y)]))])];
+//    return 'rgb('+RGB[0]+','+RGB[1]+','+RGB[2]+')';})
+//  .on('mouseover',function(d,i){console.log(d3.select(this).attr('fill'))});
+
+
+
+//bars.transition()
+//  .duration(500)
+//  .attr("x", function(d, i) {
+//    return xScale(i);
+//  })
+//  .attr("y", function(d) {
+//    return h - yScale(d.value);
+//  })
+//  .attr("width", xScale.rangeBand())
+//  .attr("height", function(d) {
+//    return yScale(d.value);
+//  });
+
+spin = function(r){
+  pi = 3.1415926536;
+  d3.select('circle')
+    .transition()
+    .duration(2000)
+    .ease('linear')
+    //.attr('cx',function(){return 400;});
+    .attrTween('cx',function(){return function(t){
+      return 400+r*Math.cos(t*2*pi)}; })
+    .attrTween('cy',function(){return function(t){
+      return 400+r*Math.sin(t*2*pi)}; })
+ }
+
+
+
+        </script>
+    </body>
+</html>
